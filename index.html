@@ -6,7 +6,6 @@
 
 <title>Invitación</title>
 
-<!-- Fuente bonita -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -44,12 +43,22 @@ body {
   max-width: 360px;
   box-shadow: 0 15px 40px rgba(0,0,0,0.6);
   border: 1px solid rgba(255,255,255,0.15);
-  animation: aparecer 0.5s ease;
+  animation: aparecer 0.4s ease;
 }
 
 @keyframes aparecer {
-  from { opacity: 0; transform: scale(0.85); }
+  from { opacity: 0; transform: scale(0.8); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* efecto pop cuando aparece la imagen */
+.pop {
+  animation: pop 0.6s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 h2 {
@@ -57,7 +66,6 @@ h2 {
   font-weight: 600;
 }
 
-/* BOTONES */
 button {
   margin-top: 20px;
   padding: 12px 20px;
@@ -77,28 +85,12 @@ button:hover {
   box-shadow: 0 6px 18px rgba(0,114,255,0.5);
 }
 
-/* IMAGEN */
 .modal-contenido img {
   width: 100%;
   max-height: 60vh;
   object-fit: cover;
   border-radius: 15px;
   margin-top: 10px;
-}
-
-/* RESPONSIVE */
-@media (max-width: 600px) {
-  .modal-contenido {
-    padding: 20px;
-  }
-
-  h2 {
-    font-size: 18px;
-  }
-
-  button {
-    font-size: 14px;
-  }
 }
 </style>
 
@@ -123,8 +115,8 @@ button:hover {
 
 <!-- MODAL IMAGEN -->
 <div id="modalImg" class="modal" style="display:none;">
-  <div class="modal-contenido">
-    <h2>Ya aceptaste :3</h2>
+  <div class="modal-contenido pop" id="card">
+    <h2>ya aceptaste :3</h2>
     <img src="invito.jpg" alt="Invitación">
     <button onclick="reiniciar()">Cerrar</button>
   </div>
@@ -138,12 +130,51 @@ function siguiente() {
 
 function mostrarImagen() {
   document.getElementById("modal2").style.display = "none";
-  document.getElementById("modalImg").style.display = "flex";
+
+  const modal = document.getElementById("modalImg");
+  const card = document.getElementById("card");
+
+  modal.style.display = "flex";
+
+  // reinicia animación
+  card.classList.remove("pop");
+  void card.offsetWidth;
+  card.classList.add("pop");
+
+  lanzarConfeti();
 }
 
 function reiniciar() {
   document.getElementById("modalImg").style.display = "none";
   document.getElementById("modal1").style.display = "flex";
+}
+
+/* 🎉 confeti simple sin librerías */
+function lanzarConfeti() {
+  for (let i = 0; i < 60; i++) {
+    const confeti = document.createElement("div");
+    confeti.style.position = "fixed";
+    confeti.style.width = "6px";
+    confeti.style.height = "6px";
+    confeti.style.background = ["#00c6ff", "#ffcc00", "#ff4d4d", "#ffffff"][Math.floor(Math.random()*4)];
+    confeti.style.left = Math.random() * 100 + "vw";
+    confeti.style.top = "-10px";
+    confeti.style.opacity = "0.8";
+    confeti.style.zIndex = "9999";
+    confeti.style.borderRadius = "50%";
+
+    document.body.appendChild(confeti);
+
+    const fall = confeti.animate([
+      { transform: "translateY(0px)" },
+      { transform: "translateY(100vh)" }
+    ], {
+      duration: 2000 + Math.random() * 2000,
+      easing: "cubic-bezier(.2,.8,.2,1)"
+    });
+
+    fall.onfinish = () => confeti.remove();
+  }
 }
 </script>
 
